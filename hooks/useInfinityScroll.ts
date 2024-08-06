@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 
 type TUseInfinityScroll<T> = {
   handleRefetch: () => Promise<void>;
@@ -40,16 +41,19 @@ export const useInfinityScroll = <T>(
     setRefetching(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      setPage(0);
-      const fnGetResult = await fn();
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        setEnd(false);
+        setLoading(true);
+        setPage(0);
+        const fnFetResultado = await fn();
 
-      setData(fnGetResult);
-      setLoading(false);
-    })();
-  }, [...triggers]);
+        setData(fnFetResultado);
+        setLoading(false);
+      })();
+    }, [...triggers])
+  );
 
   return {
     handleRefetch,
